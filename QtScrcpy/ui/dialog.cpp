@@ -860,6 +860,10 @@ void Dialog::on_startServerBtn_clicked()
     params.serverRemotePath = Config::getInstance().getServerPath();
     params.pushFilePath = Config::getInstance().getPushFilePath();
     params.gameScript = camera ? QString() : getGameScript(ui->gameBox->currentText());
+    const auto keymapName = ui->gameBox->currentText();
+    const auto userKeymap = getKeyMapPath() + "/" + keymapName;
+    m_pendingKeymaps[params.serial] = qMakePair(params.gameScript,
+        QFileInfo::exists(userKeymap) ? userKeymap : getDefaultKeyMapPath() + "/" + keymapName);
     params.logLevel = Config::getInstance().getLogLevel();
     // Apply an encoder preset (when a preset mode is selected) or the ini default.
     const int codecModeIndex = ui->codecModeBox->currentIndex();
@@ -1257,10 +1261,22 @@ void Dialog::onDeviceConnected(bool success, const QString &serial, const QStrin
 {
     Q_UNUSED(deviceName);
     if (!success) {
+        m_pendingKeymaps.remove(serial);
         return;
     }
     auto videoForm = new VideoForm(ui->framelessCheck->isChecked(), Config::getInstance().getSkin(), ui->showToolbar->isChecked(), ui->decodeModeBox->currentIndex());
     videoForm->setSerial(serial);
+    const auto keymap = m_pendingKeymaps.take(serial);
+    videoForm->setKeymapScript(keymap.first, keymap.second);
+    connect(videoForm, &VideoForm::keymapSaved, this, [this](const QString &path) {
+        const auto selected = ui->gameBox->currentText();
+        on_refreshGameScriptBtn_clicked();
+        const int index = ui->gameBox->findText(QFileInfo(path).fileName());
+        ui->gameBox->setCurrentText(index >= 0 ? QFileInfo(path).fileName() : selected);
+    });
+    connect(videoForm, &VideoForm::keymapDraftRecovered, this, [this](const QString &path) {
+        outLog(QStringLiteral("断开连接，编辑草稿已恢复到：") + path);
+    });
 
     qsc::IDeviceManage::getInstance().getDevice(serial)->setUserData(static_cast<void*>(videoForm));
     qsc::IDeviceManage::getInstance().getDevice(serial)->registerDeviceObserver(videoForm);
@@ -1311,6 +1327,7 @@ void Dialog::onDeviceDisconnected(QString serial)
     auto data = device->getUserData();
     if (data) {
         VideoForm* vf = static_cast<VideoForm*>(data);
+        vf->prepareForDisconnect();
         qsc::IDeviceManage::getInstance().getDevice(serial)->deRegisterDeviceObserver(vf);
         vf->close();
         vf->deleteLater();
@@ -1394,7 +1411,12 @@ void Dialog::on_applyScriptBtn_clicked()
         return;
     }
 
-    device->updateScript(getGameScript(ui->gameBox->currentText()));
+    const auto name = ui->gameBox->currentText();
+    const auto userPath = getKeyMapPath() + "/" + name;
+    const auto path = QFileInfo::exists(userPath) ? userPath : getDefaultKeyMapPath() + "/" + name;
+    auto *form = static_cast<VideoForm *>(device->getUserData());
+    if (form) form->setKeymapScript(getGameScript(name), path, true);
+    else device->updateScript(getGameScript(name));
 }
 
 void Dialog::on_recordScreenCheck_clicked(bool checked)

@@ -51,6 +51,8 @@ QtScrcpy 可以通过 USB / 网络连接Android设备，并进行显示和控制
 ![quickmirror](docs/image/quickmirror.png)
 
 ## 自定义按键映射
+本 Fork 新增了运行时可视化编辑：在投屏窗口按 **Ctrl+E**，或点击工具栏键盘图标，即可拖动控件、录制按键、编辑参数并即时应用。详见[操作说明](docs/RuntimeKeymapEditor_zh.md)与[实现及验证记录](docs/RuntimeKeymapEditor_Verification.md)。
+
 可以根据需要，自己编写脚本将键盘按键映射为手机的触摸点击，编写规则在[这里](docs/KeyMapDes_zh.md)。
 
 默认自带了针对和平精英手游和抖音进行键鼠映射的映射脚本，开启平精英手游后可以用键鼠像玩端游一样玩和平精英手游，开启抖音映射以后可以使用上下左右方向键模拟上下左右滑动，你也可以按照[编写规则](docs/KeyMapDes_zh.md)编写其他游戏的映射文件，默认按键映射如下：

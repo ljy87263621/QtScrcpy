@@ -17,6 +17,8 @@ class FileHandler;
 class QYUVOpenGLWidget;
 class QLabel;
 class MetalVideoWidget;
+class KeymapEditor;
+class KeymapOverlay;
 class VideoForm : public QWidget, public qsc::DeviceObserver
 {
     Q_OBJECT
@@ -35,6 +37,14 @@ public:
     void showFPS(bool show);
     void switchFullScreen();
     bool isHost();
+    bool setKeymapScript(const QString &script, const QString &path, bool apply = false);
+    void startKeymapEditor();
+    bool isEditingKeymap() const { return m_editingKeymap; }
+    void prepareForDisconnect();
+
+signals:
+    void keymapSaved(const QString &path);
+    void keymapDraftRecovered(const QString &path);
 
 private:
     void onFrame(int width, int height, uint8_t* dataY, uint8_t* dataU, uint8_t* dataV,
@@ -60,6 +70,7 @@ private:
     bool isRectOnAnyScreen(const QRect &rect) const;
 
 protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -79,6 +90,14 @@ protected:
     void dropEvent(QDropEvent *event) override;
 
 private:
+    void finishKeymapEditing(bool apply);
+    void updateKeymapOverlayGeometry();
+    bool m_editingKeymap = false;
+    bool m_recoveryHandled = false;
+    QString m_keymapScript;
+    QString m_keymapPath;
+    QPointer<KeymapEditor> m_keymapEditor;
+    QPointer<KeymapOverlay> m_keymapOverlay;
     // 获取当前视频渲染 widget（OpenGL 或 Metal 容器）
     QWidget* videoWidget() const;
     // 是否使用 Metal 渲染路径

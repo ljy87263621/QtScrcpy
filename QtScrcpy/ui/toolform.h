@@ -13,6 +13,7 @@ namespace Ui
 }
 
 class Device;
+class QPushButton;
 class ToolForm : public MagneticWidget
 {
     Q_OBJECT
@@ -61,6 +62,7 @@ private:
 
 private:
     Ui::ToolForm *ui;
+    QPushButton *m_keymapButton = nullptr;
     QPoint m_dragPosition;
     QString m_serial;
     bool m_showTouch = false;

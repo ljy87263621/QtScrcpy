@@ -51,6 +51,8 @@ QuickMirror function&features:
 ![quickmirror](docs/image/quickmirror.png)
 
 ## Mapping Keys
+This fork includes an in-app runtime keymap editor. Open a projection window and press **Ctrl+E**, or click the keyboard icon in its toolbar. See the [editor guide](docs/RuntimeKeymapEditor_zh.md) and [verification record](docs/RuntimeKeymapEditor_Verification.md).
+
 You can write your script to map keyboard and mouse actions to touches and clicks of the mobile phone according to your needs. [Here](docs/KeyMapDes.md) are the script writing rules.
 
 Script for TikTok and some other games are provided by default. Once enabled, you can play the game with your keyboard and mouse. The default key mapping for PUBG Mobile is as follows:

@@ -15,6 +15,7 @@ public:
     void updateDeviceState(const QString& serial);
     void addDevice(const QString& serial);
     void removeDevice(const QString& serial);
+    void releaseForwardedInput(const QString &sourceSerial);
 
 private:
     // DeviceObserver

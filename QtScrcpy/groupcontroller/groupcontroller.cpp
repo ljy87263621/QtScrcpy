@@ -15,7 +15,8 @@ bool GroupController::isHost(const QString &serial)
         return true;
     }
 
-    return static_cast<VideoForm*>(data)->isHost();
+    auto *form = static_cast<VideoForm*>(data);
+    return form->isEditingKeymap() || form->isHost();
 }
 
 QSize GroupController::getFrameSize(const QString &serial)
@@ -92,6 +93,18 @@ void GroupController::mouseEvent(const QMouseEvent *from, const QSize &frameSize
         }
 
         device->mouseEvent(from, getFrameSize(serial), showSize);
+    }
+}
+
+void GroupController::releaseForwardedInput(const QString &sourceSerial)
+{
+    // Followers may still hold a press forwarded before the host opens its editor.
+    for (const auto &serial : m_devices) {
+        if (serial == sourceSerial || isHost(serial)) continue;
+        auto device = qsc::IDeviceManage::getInstance().getDevice(serial);
+        if (!device) continue;
+        device->setInputPaused(true);
+        device->setInputPaused(false);
     }
 }
 

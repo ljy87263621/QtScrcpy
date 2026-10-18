@@ -1,0 +1,3 @@
+ci/win/build-ffmpeg-lgpl.sh text eol=lf
+# Preserve the downloaded third-party license page byte formatting.
+docs/licenses/Mesa-Licenses.html whitespace=-blank-at-eol

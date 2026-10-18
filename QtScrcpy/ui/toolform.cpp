@@ -12,6 +12,15 @@
 ToolForm::ToolForm(QWidget *adsorbWidget, AdsorbPositions adsorbPos) : MagneticWidget(adsorbWidget, adsorbPos), ui(new Ui::ToolForm)
 {
     ui->setupUi(this);
+    m_keymapButton = new QPushButton(this);
+    m_keymapButton->setObjectName("keymapEditorBtn");
+    m_keymapButton->setToolTip(QStringLiteral("编辑按键映射 (Ctrl+E)"));
+    m_keymapButton->setFixedHeight(30);
+    ui->verticalLayout->insertWidget(1, m_keymapButton);
+    connect(m_keymapButton, &QPushButton::clicked, this, [this] {
+        auto *video = qobject_cast<VideoForm *>(parentWidget());
+        if (video) video->startKeymapEditor();
+    });
     setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
     //setWindowFlags(windowFlags() & ~Qt::WindowMinMaxButtonsHint);
 
@@ -40,6 +49,7 @@ void ToolForm::updateCameraMode()
 {
     auto device = qsc::IDeviceManage::getInstance().getDevice(m_serial);
     const bool camera = device && device->isCameraMode();
+    m_keymapButton->setVisible(!camera);
 
     ui->groupControlBtn->setVisible(!camera);
     ui->expandNotifyBtn->setVisible(!camera);
@@ -63,6 +73,7 @@ void ToolForm::updateCameraMode()
 
 void ToolForm::initStyle()
 {
+    IconHelper::Instance()->SetIcon(m_keymapButton, QChar(0xf11c), 15);
     IconHelper::Instance()->SetIcon(ui->fullScreenBtn, QChar(0xf0b2), 15);
     IconHelper::Instance()->SetIcon(ui->menuBtn, QChar(0xf096), 15);
     IconHelper::Instance()->SetIcon(ui->homeBtn, QChar(0xf1db), 15);

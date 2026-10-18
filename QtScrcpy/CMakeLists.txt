@@ -173,6 +173,14 @@ source_group(audio FILES ${QC_AUDIO_SOURCES})
 
 # ui
 set(QC_UI_SOURCES
+    keymapeditor/keymapdocument.h
+    keymapeditor/keymapdocument.cpp
+    keymapeditor/keymapoverlay.h
+    keymapeditor/keymapoverlay.cpp
+    keymapeditor/keycapturebutton.h
+    keymapeditor/keycapturebutton.cpp
+    keymapeditor/keymapeditor.h
+    keymapeditor/keymapeditor.cpp
     ui/toolform.h
     ui/toolform.cpp
     ui/toolform.ui

@@ -8,6 +8,7 @@
 #include <QSystemTrayIcon>
 #include <QListWidget>
 #include <QTimer>
+#include <QHash>
 
 
 #include "adbprocess.h"
@@ -149,6 +150,7 @@ private:
     quint32 m_prevBitRate = 2000000;
     int m_prevMaxSizeIndex = 0;
     QPointer<PresetConfigDialog> m_presetDialog;
+    QHash<QString, QPair<QString, QString>> m_pendingKeymaps;
 };
 
 #endif // DIALOG_H
